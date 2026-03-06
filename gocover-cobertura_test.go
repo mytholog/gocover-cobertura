@@ -197,7 +197,7 @@ func TestConvertSetMode(t *testing.T) {
 	if l = m.Lines[0]; l.Number != 4 || l.Hits != 1 {
 		t.Errorf("unmatched line: Number:%d, Hits:%d", l.Number, l.Hits)
 	}
-	if l = m.Lines[1]; l.Number != 5 || l.Hits != 0 {
+	if l = m.Lines[1]; l.Number != 5 || l.Hits != 1 {
 		t.Errorf("unmatched line: Number:%d, Hits:%d", l.Number, l.Hits)
 	}
 	if l = m.Lines[2]; l.Number != 6 || l.Hits != 0 {
@@ -210,7 +210,7 @@ func TestConvertSetMode(t *testing.T) {
 	if l = c.Lines[0]; l.Number != 4 || l.Hits != 1 {
 		t.Errorf("unmatched line: Number:%d, Hits:%d", l.Number, l.Hits)
 	}
-	if l = c.Lines[1]; l.Number != 5 || l.Hits != 0 {
+	if l = c.Lines[1]; l.Number != 5 || l.Hits != 1 {
 		t.Errorf("unmatched line: Number:%d, Hits:%d", l.Number, l.Hits)
 	}
 	if l = c.Lines[2]; l.Number != 6 || l.Hits != 0 {
@@ -225,4 +225,18 @@ func TestConvertSetMode(t *testing.T) {
 	require.Equal(t, "testdata/func2.go", c.Filename)
 	require.NotNil(t, c.Methods)
 	require.Len(t, c.Methods, 3)
+}
+
+func TestLinesAddOrUpdateLineKeepsCoveredLineCovered(t *testing.T) {
+	lines := Lines{}
+	lines.AddOrUpdateLine(10, 1)
+	lines.AddOrUpdateLine(10, 0)
+	lines.AddOrUpdateLine(11, 0)
+	lines.AddOrUpdateLine(11, 2)
+
+	require.Len(t, lines, 2)
+	require.EqualValues(t, 1, lines[0].Hits)
+	require.EqualValues(t, 2, lines[1].Hits)
+	require.EqualValues(t, 2, lines.NumLinesWithHits())
+	require.Equal(t, float32(1), lines.HitRate())
 }

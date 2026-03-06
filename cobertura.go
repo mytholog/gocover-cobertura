@@ -80,13 +80,13 @@ func (lines *Lines) NumLinesWithHits() (numLinesWithHits int64) {
 }
 
 // AddOrUpdateLine adds a line if it is a different line than the last line recorded.
-// If it's the same line as the last line recorded then we update the hits down
-// if the new hits is less; otherwise just leave it as-is
+// If it's the same line as the last line recorded then we keep the greatest hit
+// count seen for that line so a covered block keeps the line covered.
 func (lines *Lines) AddOrUpdateLine(lineNumber int, hits int64) {
 	if len(*lines) > 0 {
 		lastLine := (*lines)[len(*lines)-1]
 		if lineNumber == lastLine.Number {
-			if hits < lastLine.Hits {
+			if hits > lastLine.Hits {
 				lastLine.Hits = hits
 			}
 			return
