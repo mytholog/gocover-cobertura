@@ -1,4 +1,4 @@
-module github.com/boumenot/gocover-cobertura
+module github.com/mytholog/gocover-cobertura
 
 go 1.24.0
 
